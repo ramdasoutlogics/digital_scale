@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:roundabnt/round_abnt.dart';
 
+// ignore: must_be_immutable
 class DigitalScale implements DigitalScaleImplementation {
   final String digitalScalePort;
   final String digitalScaleModel;
@@ -16,13 +17,44 @@ class DigitalScale implements DigitalScaleImplementation {
   static int factor = 1;
   static String initString = '';
 
+  int? stopBitss;
+
+  int? bitss;
+
+  int? paritys;
+
   /// initialize the serial port and call methods
   DigitalScale(
       {required this.digitalScalePort,
       required this.digitalScaleModel,
       required this.digitalScaleRate,
-      required this.digitalScaleTimeout,}) {
+      required this.digitalScaleTimeout,
+      String? initStringg,
+      int? factorr,
+      int? stopBitss,
+      int? bitss,
+      int? paritys}) {
     serialPort = SerialPort(digitalScalePort);
+
+    if (initStringg != null) {
+      initString = initStringg;
+    }
+
+    if (factorr != null) {
+      factor = factorr;
+    }
+
+    if (stopBitss != null) {
+      this.stopBitss = stopBitss;
+    }
+
+    if (bitss != null) {
+      this.bitss = bitss;
+    }
+
+    if (paritys != null) {
+      this.paritys = paritys;
+    }
 
     bool resp = open();
 
@@ -61,6 +93,11 @@ class DigitalScale implements DigitalScaleImplementation {
     int parity;
 
     switch (digitalScaleModel.toLowerCase()) {
+      case 'other':
+        stopBits = stopBitss!;
+        bits = bitss!;
+        parity = paritys!;
+        break;
       case 'toledo prix 3':
         initString = String.fromCharCode(5) + String.fromCharCode(13);
         factor = 1000;
